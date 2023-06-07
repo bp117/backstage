@@ -97,10 +97,9 @@ function LibsByCategory() {
   return (
    
     <Card  sx={{
-      p: 2.5,
-      background:`${theme.colors.gradients.black1}`
+      p: 2.5
     }}>
-      <CardHeader sx={{color: `${theme.colors.alpha.trueWhite[70]}`}} title={t('Libraries by Category')} />
+      <CardHeader  title={t('Services by Languages')} />
       <Divider />
       <CardContent>
         <Grid container spacing={3}>
@@ -129,7 +128,8 @@ function LibsByCategory() {
                     display: 'flex',
                     alignItems: 'center',
                     mr: 2,
-                    color: `${libs.datasets[0].backgroundColor[i]}`
+                    color: `${libs.datasets[0].backgroundColor[i]}`,
+                    fontWeight: 600
                   }}
                 >
                   <DotLegend

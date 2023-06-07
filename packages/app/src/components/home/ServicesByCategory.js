@@ -97,10 +97,9 @@ function ServicesByCategory() {
   return (
 
     <Card  sx={{
-      p: 2.5,
-      background:`${theme.colors.gradients.black1}`
+      p: 2.5
     }}>
-      <CardHeader sx={{color: `${theme.colors.alpha.trueWhite[70]}`}} title={t('Services by Category')} />
+      <CardHeader  title={t('Services by Environment')} />
       <Divider />
       <CardContent>
         <Grid container spacing={3}>
@@ -129,7 +128,8 @@ function ServicesByCategory() {
                     display: 'flex',
                     alignItems: 'center',
                     mr: 2,
-                    color: `${services.datasets[0].backgroundColor[i]}`
+                    color: `${services.datasets[0].backgroundColor[i]}`,
+                    fontWeight: 600
                   }}
                 >
                   <DotLegend
