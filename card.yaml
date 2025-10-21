@@ -1,0 +1,205 @@
+display_name: "Rag Agent 2A XYZ"
+ref_component_id: "tachyon-rag-agent"
+appid: "2A"
+lob: "XYZ"
+transport_type: "local"
+package_id: "tachyon-rag-agent"
+preferred_port: 10004
+runtime_id: "tachyon-rag-agent-2A-OCP-XYZ"
+component_type: "agent"
+agent_card_version: "1.0"
+protocols:
+  - "A2A/2025.1"
+contacts:
+  - email: "XYZ_psg_support@abc.com"
+    role: "PSG"
+dependent_agents:
+  - "tachyon-text2sql-agent-2A-OCP-XYZ"
+dependent_tools:
+  - "tachyon-mcp-rag-2A-OCP-XYZ"
+repo_type: "agent"
+staticId: "tachyon-rag-agent-Local"
+language: "python"
+yml_version: 1
+tachyon_version: 1
+command: "python -m tachyon_rag_agent"
+dependentAgents: []
+dependentTools:
+  - "tachyon-mcp-rag"
+dependencies:
+  - command: "pip install -U tachyon-langchain-client"
+  - command: "pip install -U tachyon-a2a-core"
+  - command: "pip install -U langgraph"
+  - command: "pip install -U httpx"
+  - command: "pip install -U tachyon-mcp-rag"
+port: 10004
+metadata:
+  created_at: "2025-09-14T00:00:00Z"
+  version: "1.0.0"
+  environment: "local-dev"
+  agent_type: "langgraph"
+telemetry:
+  otel_enabled: true
+  trace_exporter: "otlp"
+  metrics_exporter: "arize"
+deployments:
+  - environment: "development"
+    endpoint: "http://localhost:10004"
+    monitoring_endpoint: "http://localhost:8050"
+    arize_endpoint: "https://arize-dev.apps.man27.ocp.nonprod.net"
+    health_check_path: "/api/health"
+  - environment: "production"
+    endpoint: "https://rag-agent.apps.ocp.prod.net/v1/a2a"
+    monitoring_endpoint: "https://rag-agent-monitor.apps.ocp.prod.net"
+    arize_endpoint: "https://arize-prod.apps.ocp.prod.net"
+    health_check_path: "/api/health"
+arize_config:
+  - environment: "dev"
+    space_id: "rag_agent_space"
+    project_id: "rag_agent_project"
+models:
+  router_model: "gemini-2.0-flash"
+  judge_model: "gemini-2.0-flash"
+security_schemes:
+  Bearer:
+    type: "http"
+    scheme: "bearer"
+    bearer_format: "JWT"
+    description: "OAuth 2.0 Bearer token using JWT, issued by enterprise IdP."
+security:
+  - Bearer: []
+skills:
+  - id: "semantic_search"
+    name: "Semantic Search Company Info"
+    description: "Performs semantic search on company policies and guidelines to retrieve relevant information."
+    tags: ["search", "retrieval", "company-info"]
+    examples:
+      - "Find company policy on remote work"
+      - "Search for IT security guidelines"
+      - "What is the vacation policy?"
+    security:
+      - Bearer: ["rag:search"]
+  - id: "hybrid_search_summarize"
+    name: "Hybrid Search and Summarize"
+    description: "Performs hybrid retrieval (semantic + keyword) on business documents and provides a summarized response."
+    tags: ["search", "summarization", "hybrid-retrieval"]
+    examples:
+      - "Summarize expense reimbursement policies"
+      - "Find and summarize compliance requirements for Q1"
+      - "Search for project management guidelines and summarize key points"
+    security:
+      - Bearer: ["rag:search", "rag:summarize"]
+goals:
+  - name: "SemanticSearchCompanyInfo"
+    description: "Semantic search for company policies."
+  - name: "HybridSearchAndSummarize"
+    description: "Hybrid Retrieval of business docs and summarization."
+tools:
+  - name: "search_and_summarize"
+    ref_component_id: "tachyon-mcp-rag"
+    description: "Searches documents and summarizes results."
+    argument_rules:
+      - parameter: "query"
+        rule:
+          type: "string"
+          required: true
+          min_length: 5
+          pattern_description: "Query must be a meaningful question."
+      - parameter: "search_type"
+        rule:
+          type: "string"
+          required: true
+          min_length: 5
+          pattern_description: "Should be either semantic or hybrid"
+          enum: ["semantic", "hybrid"]
+      - parameter: "reranker"
+        rule:
+          type: "string"
+          required: true
+          min_length: 2
+          pattern_description: "Should be either CE, Hybrid, or RRF"
+          enum: ["CE", "Hybrid", "RRF"]
+guardrails:
+  budgeting:
+    enabled: true
+    goals:
+      - goal_name: "SemanticSearchCompanyInfo"
+        max_duration_seconds: 90
+        max_token_limit: 10000
+        max_steps: 10
+  loop_detection:
+    enabled: true
+    goals:
+      - goal_name: "SemanticSearchCompanyInfo"
+        threshold: 3
+  safe_tools:
+    enabled: true
+    goals:
+      - goal_name: "SemanticSearchCompanyInfo"
+        allow: ["search_and_summarize"]
+        deny: ["text2sql", "web_search"]
+  goal_drift:
+    enabled: true
+    goals:
+      - goal_name: "SemanticSearchCompanyInfo"
+        reasoning: "This 1-step trajectory uses semantic search to find and summarize company info"
+        trajectory:
+          - tool_name: "search_and_summarize"
+            expected_params:
+              query:
+                required: true
+                pattern: "(?i)(policy|guideline)"
+              search_type:
+                required: true
+                enum: ["semantic"]
+              reranker:
+                required: true
+                enum: ["CE"]
+sections:
+  - name: "Overview"
+    description: "Provides A2A compatible Langgraph based Agent..."
+  - name: "Code"
+    description: "The sample source code for RAG agent functionality"
+    libraries:
+      - name: "A2A_langgraph"
+        installation_command: "pip install tachyon-rag-agent"
+        sample_file: "a2a_langgraph_rag.py"
+        command_to_start_agent_server: "python -m tachyon_rag_agent"
+authParams: []
+auth_params:
+  - param: "OAUTH_CLIENT_ID"
+    display_name: "OAuth Client ID"
+    description: "Client ID for OAuth 2.0 authentication"
+    required: true
+  - param: "OAUTH_CLIENT_SECRET"
+    display_name: "OAuth Client Secret"
+    description: "Client Secret for OAuth 2.0 authentication"
+    required: true
+    sensitive: true
+  - param: "IDP_TOKEN_ENDPOINT"
+    display_name: "IdP Token Endpoint"
+    description: "Enterprise IdP token endpoint URL"
+    required: true
+    default: "https://idp.com/oauth/token"
+configParams:
+  - param: "RAG_USECASE_ID"
+    display_name: "RAG_USECASE_ID"
+    description: "Unique identifier for the RAG use case"
+    required: true
+  - param: "RAG_API_KEY"
+    display_name: "RAG_API_KEY"
+    description: "API key for RAG service authentication"
+    required: true
+    sensitive: true
+  - param: "MAX_SEARCH_RESULTS"
+    display_name: "Max Search Results"
+    description: "Maximum number of search results to return"
+    required: false
+    default: "10"
+  - param: "ENABLE_RERANKING"
+    display_name: "Enable Reranking"
+    description: "Enable reranking of search results"
+    required: false
+    default: "true"
+entitlements:
+  - "DOE.ReadOnly.MLOPS"
