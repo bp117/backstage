@@ -1,133 +1,92 @@
+Perfect — you want the LLM to review the entire Distinguished Engineer package holistically and output one consolidated score (0, 0.5, or 1) along with a summary of 1–3 positive attributes and 1–2 development areas, not per competency.
 
- 
+Here’s a refined and enterprise-ready prompt you can use directly with your model or evaluator pipeline 👇
+
+
+---
+
+🧠 Prompt: Distinguished Engineer Package – Consolidated Evaluation
+
 You are an expert reviewer evaluating a Distinguished Engineer (DE) nomination package.
-Your goal is to assess the quality, depth, and impact of the content across all evaluation dimensions, assigning a score of 0, 0.5, or 1 for each competency, followed by a short summary of strengths and development areas.
+The document contains detailed evidence of technical impact, innovation, leadership, and influence.
+Your task is to assess it holistically and provide a single overall rating, along with qualitative insights.
 
 
 ---
 
-Evaluation Instructions
+Evaluation Criteria (Holistic)
 
-For each competency listed below:
+When forming your overall view, consider the following dimensions collectively:
 
-1. Read the document content carefully.
+Architectural Leadership – depth and breadth of technical strategy, design thinking, and enterprise impact
 
+Innovation & IP – originality, patents, frameworks, or reusable assets
 
-2. Assign a score:
+Engineering Excellence – code quality, scalability, automation, and craftsmanship
 
-1 = Exemplary → Clear, deep impact, strategic thought leadership, strong storytelling, measurable outcomes.
+Business Impact – measurable outcomes, cost savings, efficiency, risk reduction
 
-0.5 = Emerging / Partial → Some evidence, but lacks breadth, depth, or clarity.
+Thought Leadership – evangelism, mentoring, community engagement
 
-0 = Absent / Weak → Minimal or no evidence of this competency.
+Influence & Collaboration – cross-team leadership, mentoring, consensus building
 
+Strategic Vision – forward-looking perspective and alignment to enterprise goals
 
-
-3. Provide:
-
-1–3 Positive Attributes (strengths) – highlight what stands out or differentiates the candidate.
-
-1–2 Development Areas – suggest areas where articulation, evidence, or scope can be improved.
-
-
+Execution – ability to deliver at scale and operationalize innovation
 
 
 
 ---
 
-Competencies to Evaluate
+Scoring Rubric
 
-1. Architectural Leadership
+Assign one consolidated overall score:
 
-Evaluate clarity of architectural thinking, systems design excellence, influence on platform or product architecture, and ability to set technical direction.
+Score	Meaning	Guidance
 
-
-
-2. Innovation & Intellectual Property
-
-Assess originality of ideas, patents, frameworks, or reusable assets that have created measurable business value or differentiation.
-
-
-
-3. Engineering Excellence
-
-Evaluate coding depth, design principles, automation, reliability engineering, performance improvements, or craftsmanship in engineering delivery.
-
-
-
-4. Impact & Business Outcomes
-
-Assess how well the candidate connects technical work to tangible business outcomes—time saved, cost reduced, efficiency improved, risk mitigated, etc.
-
-
-
-5. Thought Leadership & Evangelism
-
-Evaluate contribution to organizational knowledge—talks, papers, mentoring, community engagement, or external recognition.
-
-
-
-6. Collaboration & Influence
-
-Assess ability to influence across teams, mentor peers, build consensus, and elevate the overall engineering culture.
-
-
-
-7. Strategic Vision & Foresight
-
-Evaluate ability to anticipate trends, define north stars, guide technology investments, and align engineering direction with enterprise goals.
-
-
-
-8. Execution & Delivery
-
-Evaluate ownership, ability to drive from idea to implementation, and ensure scalable, production-grade outcomes.
-
-
+1	Exemplary	Clear, compelling narrative showing exceptional impact, leadership, and influence at scale. Evidence of sustained excellence and vision.
+0.5	Emerging / Partial	Good evidence of impact but lacks breadth, clarity, or sustained scale in one or more dimensions.
+0	Weak / Limited	Minimal evidence of impact, unclear articulation, or missing linkage between technology and outcomes.
 
 
 
 ---
 
-Output Format
+Expected Output Format
 
-Respond in the following structured JSON format:
+Respond strictly in the JSON format below:
 
 {
-  "Architectural Leadership": {
-    "score": 1,
-    "positive_attributes": [
-      "Demonstrates clear architectural vision with modular design patterns.",
-      "Influenced enterprise-level architecture decisions.",
-      "Established reusable patterns for GenAI integration."
-    ],
-    "development_areas": [
-      "Provide clearer metrics on adoption impact."
-    ]
-  },
-  "Innovation & IP": {
-    "score": 0.5,
-    "positive_attributes": [
-      "Multiple innovative POCs and platform contributions."
-    ],
-    "development_areas": [
-      "Highlight patents or tangible IP conversion outcomes."
-    ]
-  },
-  ...
+  "overall_score": 1,
+  "positive_attributes": [
+    "Demonstrates exceptional architectural and platform leadership with measurable enterprise-wide adoption.",
+    "Showcases multiple innovations and patents with tangible business outcomes.",
+    "Acts as a visible technology evangelist driving organizational culture and mentoring future leaders."
+  ],
+  "development_areas": [
+    "Include clearer quantitative metrics for impact to strengthen the narrative.",
+    "Add external visibility examples such as conference talks or publications."
+  ],
+  "summary_comment": "An outstanding DE package showing deep technical mastery, scalable architectural influence, and consistent innovation. The articulation of outcomes is strong, though impact quantification could further enhance the narrative."
 }
 
 
 ---
 
-Guidance to the Model
+Model Guidance
 
-Use balanced, evidence-based reasoning grounded in the text.
+Evaluate the document as a whole, not section by section.
 
-Avoid generic praise; highlight specific, observable behaviors or outcomes.
+Weigh depth, clarity, and impact over verbosity.
 
-Keep development areas constructive, actionable, and professional.
+Ensure tone is professional, balanced, and actionable.
 
-Total scoring can be aggregated later (average or sum), but focus on qualitative insights per category.
+Keep 3–5 concise sentences in the summary_comment.
+
+Use evidence from the document to justify the scoring, avoiding generic statements.
 
 
+
+---
+
+Would you like me to adapt this prompt for multi-reviewer aggregation (e.g., average of 3 evaluators with weighted scoring and consensus summary)? That’s often used in DE panels to standardize outcomes.
